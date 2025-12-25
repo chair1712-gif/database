@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Data Siswa - School Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Sistem Data Siswa</h1>
+            </div>
+            <p class="subtitle">Management Data Siswa Digital - CRUD dengan API</p>
+            <div class="api-status">
+                <span id="statusDot" class="status-dot"></span>
+                <span id="statusText">Mengecek koneksi API...</span>
+            </div>
+        </header>
+
+        <!-- Form Input Siswa -->
+        <div class="form-section">
+            <h2><i class="fas fa-user-plus"></i> Form Data Siswa</h2>
+            <form id="siswaForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nis"><i class="fas fa-id-card"></i> NIS *</label>
+                        <input type="text" id="nis" placeholder="Nomor Induk Siswa" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nama"><i class="fas fa-user"></i> Nama Siswa *</label>
+                        <input type="text" id="nama" placeholder="Nama lengkap siswa" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ttl"><i class="fas fa-calendar-alt"></i> Tempat, Tanggal Lahir</label>
+                        <input type="text" id="ttl" placeholder="Contoh: Jakarta, 15 Januari 2008">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alamat"><i class="fas fa-home"></i> Alamat</label>
+                        <textarea id="alamat" rows="2" placeholder="Alamat lengkap"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kota"><i class="fas fa-city"></i> Kota</label>
+                        <input type="text" id="kota" placeholder="Kota tempat tinggal">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kelas"><i class="fas fa-school"></i> Kelas *</label>
+                        <select id="kelas" required>
+                            <option value="">Pilih Kelas</option>
+                            <option value="10 IPA 1">10 IPA 1</option>
+                            <option value="10 IPA 2">10 IPA 2</option>
+                            <option value="10 IPS 1">10 IPS 1</option>
+                            <option value="10 IPS 2">10 IPS 2</option>
+                            <option value="11 IPA 1">11 IPA 1</option>
+                            <option value="11 IPA 2">11 IPA 2</option>
+                            <option value="11 IPS 1">11 IPS 1</option>
+                            <option value="11 IPS 2">11 IPS 2</option>
+                            <option value="12 IPA 1">12 IPA 1</option>
+                            <option value="12 IPA 2">12 IPA 2</option>
+                            <option value="12 IPS 1">12 IPS 1</option>
+                            <option value="12 IPS 2">12 IPS 2</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" id="submitBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan Data
+                    </button>
+                    <button type="button" id="cancelBtn" class="btn btn-secondary" style="display:none;">
+                        <i class="fas fa-times"></i> Batal Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari siswa (NIS, Nama, atau Kelas)...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Semua Siswa</button>
+                <button class="filter-btn" data-filter="10">Kelas 10</button>
+                <button class="filter-btn" data-filter="11">Kelas 11</button>
+                <button class="filter-btn" data-filter="12">Kelas 12</button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-section">
+            <h2><i class="fas fa-list"></i> Daftar Siswa</h2>
+            <div class="table-container">
+                <table id="siswaTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th><i class="fas fa-id-card"></i> NIS</th>
+                            <th><i class="fas fa-user"></i> Nama Siswa</th>
+                            <th><i class="fas fa-calendar-alt"></i> TTL</th>
+                            <th><i class="fas fa-home"></i> Alamat</th>
+                            <th><i class="fas fa-city"></i> Kota</th>
+                            <th><i class="fas fa-school"></i> Kelas</th>
+                            <th><i class="fas fa-cog"></i> Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siswaTableBody">
+                        <!-- Data akan dimuat di sini -->
+                        <tr class="empty-row">
+                            <td colspan="8">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <p>Belum ada data siswa. Tambahkan data pertama!</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-section">
+            <h2><i class="fas fa-chart-bar"></i> Statistik</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #4CAF50;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Siswa</h3>
+                        <p id="totalSiswa">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #2196F3;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Kelas 10</h3>
+                        <p id="kelas10">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #9C27B0;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Kelas 11</h3>
+                        <p id="kelas11">0</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FF9800;">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Kelas 12</h3>
+                        <p id="kelas12">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Information -->
+        <div class="api-info-section">
+            <h2><i class="fas fa-code"></i> API Documentation</h2>
+            <div class="endpoints-grid">
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <code>/api/siswa</code>
+                    </div>
+                    <p>Mengambil semua data siswa</p>
+                </div>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <code>/api/siswa</code>
+                    </div>
+                    <p>Menambah data siswa baru</p>
+                </div>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method put">PUT</span>
+                        <code>/api/siswa/{id}</code>
+                    </div>
+                    <p>Mengupdate data siswa</p>
+                </div>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method delete">DELETE</span>
+                        <code>/api/siswa/{id}</code>
+                    </div>
+                    <p>Menghapus data siswa</p>
+                </div>
+            </div>
+            <p class="api-url">API URL: <code id="apiUrl">Loading...</code></p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p><i class="fas fa-laptop-code"></i> Sistem Data Siswa v1.0</p>
+                <p>Dibangun dengan HTML, CSS, JavaScript & Netlify Functions</p>
+                <p class="timestamp" id="lastUpdate">Terakhir update: -</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus</h3>
+            <p>Apakah Anda yakin ingin menghapus data siswa ini?</p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="btn btn-danger">Ya, Hapus</button>
+                <button id="cancelDelete" class="btn btn-secondary">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
